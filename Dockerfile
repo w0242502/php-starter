@@ -1,5 +1,5 @@
 # use the official PHP image as base image
-FROM php:7.4-apache
+FROM php:8.5-apache
 # copy the Composer PHAR from the Composer image into the PHP image
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 COPY mysites.conf /etc/apache2/sites-enabled/000-default.conf

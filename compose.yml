@@ -1,31 +1,29 @@
-version: '3'
 services:
   # MariaDB Service
-  db:
-    container_name: db
+  mariadb:
     image: mariadb:latest
+    # restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: super_secret123?
+      MARIADB_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MARIADB_USER: ${MYSQL_USER}
+      MARIADB_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_DATABASE: courses
-      MYSQL_USER: user
-      MYSQL_PASSWORD: secret_pwd123?
     ports:
       - "9906:3306"
     volumes:
-      - ./mysql-data:/var/lib/mysql
+      - mariadb:/var/lib/mysql
     networks:
       - php-mariadb-network
 
   # PHP Service
   php:
-    # image: php:7.4-apache
-    # image: php-byme
+    # image: php:8.2-apache
     container_name: php-apache
     build:
       context: .
       dockerfile: Dockerfile
     depends_on:
-      - db
+      - mariadb
     volumes:
       - ./app/src:/var/www/html
     ports:
@@ -39,11 +37,20 @@ services:
     ports:
       - '8113:80'
     environment:
-      PMA_HOST: db
+      PMA_HOST: mariadb
     depends_on:
-      - db
+      - mariadb
     networks:
       - php-mariadb-network
 
 networks:
   php-mariadb-network:
+
+volumes:
+  mariadb:
+
+
+      #   MYSQL_ROOT_PASSWORD: super_secret123?
+      # MYSQL_DATABASE: courses
+      # MYSQL_USER: user
+      # MYSQL_PASSWORD: secret_pwd123?
